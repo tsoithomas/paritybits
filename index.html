@@ -1,0 +1,411 @@
+<html>
+
+<head>
+<title>ICT Rocks 🤘🏻</title>
+
+
+<link rel="icon" href="favicon.ico" type="image/x-icon"/>
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+
+<link href="https://fonts.googleapis.com/css?family=Fredericka+the+Great&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Ubuntu+Condensed&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Ubuntu&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Poiret+One&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=PT+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Oswald&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="./css/main.css">
+<script type="text/javascript" src="./js/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="./js/jquery-ui.min.js"></script>
+
+
+<script>
+var data = [], 
+	data_length = 9, 
+	parity_type = 0, 
+	choice = 0,
+	time_start,
+	time_end,
+	time_remain = 60,
+	score = 0,
+	protect = false;
+
+$(function () {
+	$("#timer").html(time_remain);
+
+	$("#start").click(function() {
+		$("#startpanel").fadeOut("slow", function() {
+			$("#gamefield").fadeIn("slow", function () {
+				startgame();
+			});
+		});
+	});
+	
+	$(".ans").click(function() {
+		if (time_remain <= 0) endgame();
+		if (!protect && time_remain > 0) {
+			protect = true;
+			
+			var now = new Date();
+			time_end = now.getTime();
+			time_diff = time_end - time_start;
+			
+			if ($(this).attr("id") == "zero") choice = 0;
+			else choice = 1;
+			
+			
+			$(this).transfer({
+				to: $("#blank"),
+				duration: "fast"
+			}, function() {
+				$("#answers").hide();
+				protect = false;
+				
+				$("#blank").text(choice);
+				
+				sum = 0;
+				for (i=0; i<data.length; i++) sum += data[i];
+				parity = sum%2;
+				if ((parity + parity_type)%2 == choice) {
+					score += Math.floor((2000+Math.max(8000-time_diff, 0))*(data_length+1)/10);
+					$("#score").text(score);
+					$("#question").animate({"background-color": "rgba(62, 211, 50, 0.5)"}, 100).delay(200).animate({"background-color": "rgba(0, 0, 0, 0.1)"}, 200, function() {showquestion();});
+				}
+				else {
+					score -= 5000;
+					$("#score").text(score);
+					$("#question").animate({"background-color": "rgba(211, 50, 50, 0.5)"}, 100).delay(200).animate({"background-color": "rgba(0, 0, 0, 0.1)"}, 200, function() {showquestion();});
+				}
+			});
+		}
+	});
+});
+
+function startgame() {
+	showquestion();
+	setTimeout(timer, 1000);
+}
+
+function endgame() {
+	$("#gamefield").fadeOut(function() {$("#user").fadeIn();});
+	$("#final-score").html(score);
+	
+}
+
+function timer() {
+	time_remain--;
+	$("#timer").html(time_remain);
+	
+	if (time_remain > 0) {
+		setTimeout(timer, 1000);
+	}
+	else {
+		endgame();
+	}
+}
+
+function showquestion() {
+	// Assign data
+	data_length = 5+Math.floor(Math.random()*5);
+	data.length = 0;
+	for (i=0; i<data_length; i++) {
+		digit = Math.floor(Math.random() + 0.5);
+		data.push(digit);
+	}
+	parity_type = Math.floor(Math.random() + 0.5);
+	
+	// Select type
+	$("#types div").removeClass("active");
+	$("#types div:nth-child("+(parity_type+1)+")").addClass("active");
+	
+	// Show data
+	$("#question").html("");
+	var counter = 0;
+	for (var i=0; i<data.length; i++) {
+		$("#question").queue(function (next) {
+			$("#question").append($("<span class='data'>" + data[counter++] + "</span>").hide().fadeIn(500));
+			next();
+		}).delay(100);
+	}
+	$("#question").queue(function (next) {
+		$("#question").append($("<span id='blank' class='data'>?</span>").hide().fadeIn(500));
+		next();
+		$("#answers").fadeIn(500);
+		var now = new Date();
+		time_start = now.getTime();
+		console.log(time_start);
+	}).delay(100);
+}
+
+
+</script>
+
+<style type='text/css'>
+#gamefield {
+	margin-top: 50px;
+	display: block;
+	height: 300px;
+	text-align: center;
+	display: none;
+}
+
+#timer {
+	display: inline-block;
+	width: 150px;
+	height: 100px;
+	border-radius: 10px;
+	line-height: 100px;
+	font-family: 'Ubuntu', sans-serif;
+	font-size: 50pt;
+	background-color: rgba(0, 0, 0, 0.5);
+	color: #ccc;
+	user-select: none;
+}
+
+#score-right {
+	position: relative;
+	display: inline-block;
+	float: right;
+	height: 100px;
+	width: 200px;
+	line-height: 100px;
+	font-family: 'Oswald', sans-serif;
+	font-size: 20pt;
+	text-align: right;
+	padding-right: 20px;
+	box-sizing: border-box;
+	user-select: none;
+	color: rgba(0,0,0,0.4);
+}
+
+#score-left {
+	position: relative;
+	display: inline-block;
+	float: left;
+	height: 100px;
+	width: 200px;
+	user-select: none;
+}
+#types {
+	margin: 20px auto;
+}
+
+#types div {
+	display: inline-block;
+	width: 350px;
+	height: 40px;
+	border-radius: 8px;
+	margin: 0 10px;
+	background-color: #163e18;
+	color: #19691d;
+	line-height: 40px;
+	font-family: 'PT Mono', monospace;
+	font-size: 20pt;
+	user-select: none;
+	transition: all .2s ease-in-out;
+}
+
+#types .active{
+	color: #3dce44;
+	text-shadow: 0px 0px 4px rgba(61,206,68,0.85);
+}
+
+#question {
+	height: 60px;
+	border-top-left-radius: 40px;
+	border-top-right-radius: 20px;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 40px;
+	background-color: rgba(0, 0, 0, 0.1);
+	padding: 40px;
+	text-align: left;
+}
+
+#question.correct {
+	background-color: rgba(62, 211, 50, 0.5);
+}
+
+#question.incorrect {
+	background-color: rgba(211, 50, 50, 0.5);
+}
+
+#question .data {
+	display: inline-block;
+	width: 60px;
+	height: 60px;
+	background-color: rgba(0, 0, 0, 0.3);
+	color: #fff;
+	border-radius: 5px;
+	text-align: center;
+	margin: 0 3px;
+	font-family: 'Poiret One', cursive;
+	font-size: 30pt;
+	line-height: 60px;
+	user-select: none;
+}
+
+#question #blank {
+	background-color: rgba(255, 255, 255, 0.3) !important;
+	color: #fff;
+	float: right;
+}
+
+#answers {
+	display: none;
+	height: 100px;
+	text-align: center;
+	margin-top: 20px;
+}
+
+#answers .ans {
+	display: inline-block;
+	width: 80px;
+	height: 80px;
+	background-color: rgba(255, 255, 255, 0.3);
+	color: #fff;
+	border-radius: 10px;
+	text-align: center;
+	margin: 0 20px;
+	font-family: 'Poiret One', cursive;
+	font-size: 40pt;
+	line-height: 80px;
+	cursor: pointer;
+	user-select: none;
+	transition: all .2s ease-in-out;
+}
+#answers .ans:hover {
+	background-color: rgba(255, 255, 255, 0.5);
+}
+
+#startpanel {
+	margin-top: 100px;
+	text-align: center;
+}
+
+
+#startpanel #start {
+	display: inline-block;
+	width: 150px;
+	height: 80px;
+	background-color: rgba(255, 255, 255, 0.3);
+	color: #fff;
+	border-radius: 20px;
+	font-family: 'Poiret One', cursive;
+	font-size: 40pt;
+	line-height: 80px;
+	cursor: pointer;
+	user-select: none;
+	transition: all .2s ease-in-out;
+}
+
+#startpanel #start:hover {
+	background-color: rgba(255, 255, 255, 0.5);
+}
+
+.ui-effects-transfer {
+	border: 1px solid rgba(255, 255, 255, 0.5);
+	border-radius: 5px;
+}
+
+
+#user {
+	user-select: none;
+	display: none;
+	font-family: "Ubuntu", sans-serif;
+	font-size: 36px;
+	color: #fff;
+	text-align: center;
+	padding-top: 100px;
+}
+
+#user #name {
+	border: 0;
+	width: 300px;
+	height: 50px;
+	border-radius: 25px;
+	margin-top: 10px;
+	font-family: "Ubuntu", sans-serif;
+	font-size: 36px;
+	padding: 4px 15px;
+	color: #aaa;
+	text-align: center;
+}
+
+#user-score {
+	font-family: 'Oswald', sans-serif;
+	font-size: 40pt;
+	text-align: center;
+	color: rgba(0,0,0,0.4);
+}
+
+#save {
+	border: 0;
+	width: 100px;
+	height: 40px;
+	border-radius: 20px;
+	margin-top: 10px;
+	font-family: "Ubuntu", sans-serif;
+	font-size: 25px;
+	padding: 4px 10px;
+	color: #aaa;
+	text-align: center;
+	cursor: pointer;
+}
+
+#save:hover {
+	background-color: #444;
+	color: #fff;
+}
+
+</style>
+
+</head>
+
+
+
+<body>
+
+<div id="content">
+
+	<h1>republic of <span id="i">i</span><span id="c">c</span>ed<span id="t">t<span class="speech-bubble">t for t.tsoi 🤘🏻</span></span>ea</h1>
+
+	<h2><div>parity bits</div></h2>
+	
+	<div id="startpanel">
+		<div id="start">start</div>
+	</div>
+
+	<div id="gamefield">
+		<div id="score-left"></div>
+		<div id="score-right">score: <span id="score">0</span></div>
+		
+		<div id="timer"></div>
+		
+		<div id="types">
+			<div class="even">even parity check</div><div class="odd">odd parity check</div>
+		</div>
+		
+		<div id="question"></div>
+		
+		<div id="answers">
+			<div class="ans" id="zero">0</div><div class="ans" id="one">1</div>
+		</div>
+	</div>
+	
+	<div id="user">
+		<div id="user-score">score: <span id="final-score"></span></div>
+		<div>enter your name</div>
+		<input type="text" id="name" maxlength=10>
+		<div><input type="button" id="save" value="save"></div>
+	</div>
+
+	
+	
+	
+	
+	
+</div>
+
+
+</body>
+</html>

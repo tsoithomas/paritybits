@@ -1,0 +1,113 @@
+body {
+	background-color: #9db0b8;
+}
+
+#content {
+	width: 800px;
+	border-top-left-radius: 200px;
+	border-top-right-radius: 100px;
+	border-bottom-left-radius: 50px;
+	border-bottom-right-radius: 200px;
+	border: 2px dotted #fff;
+	min-height: 800px;
+	margin: 40px auto 20px auto;
+	background-color: rgba(255, 255, 255, 0.1);
+	padding: 20px;
+	box-sizing: border-box;
+}
+
+h1 {
+	font-family: 'Fredericka the Great', cursive;
+	text-align: center;
+	color: #fff;
+	font-size: 44pt;
+	margin-bottom: 5px;
+}
+
+h1 #i {color: #f3eec5;}
+h1 #c {color: #dcf6ef;}
+h1 #t {color: #f6dce8; position: relative;}
+h1 #t:hover .speech-bubble {opacity: 1;}
+
+.speech-bubble {
+	position: absolute;
+	top: -35px;
+	left: -30px;
+	width: 85px;
+	padding: 10px 15px;
+	background: rgba(0,0,0, 0.7);
+	border-radius: 2em;
+	display: inline-block;
+	font-family: Arial;
+	font-size: 10pt;
+	opacity: 0;
+	transition: all .4s ease-in-out;
+	font-family: 'Calibri', sans-serif;
+	font-size: 12pt;
+	color: #fff;
+}
+
+.speech-bubble:after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	width: 0;
+	height: 0;
+	border: 16px solid transparent;
+	border-top-color: rgba(0,0,0, 0.7);
+	border-bottom: 0;
+	border-left: 0;
+	margin-left: -8px;
+	margin-bottom: -16px;
+}
+
+
+h2 {
+	font-family: 'Ubuntu Condensed', sans-serif;
+	font-size: 30pt;
+	text-align: center;
+	color: #fff;
+	margin: 10px auto;
+}
+
+h2 div {
+	display: inline-block;
+	border-radius: 30px;
+	border: 4px solid #fff;
+	padding: 5px;
+}
+
+
+.logo {text-align: center;}
+
+#icedtea {
+	width: 128px;
+	height: 128px;
+	border-radius: 64px;
+	background-color: rgb(255, 255, 255, 0.7);
+	margin: 0 auto;
+}
+
+#icedtea:hover {
+	animation: pulse 0.4s infinite alternate;
+	animation-delay: -0.5s
+}
+
+@keyframes pulse {
+  from { 
+	box-shadow: inset 0px 0px 5px 0px rgba(255, 210, 0, 0.75), 0px 0px 15px 0px rgba(255, 210, 0, 0.75); 
+	}
+  to { 
+	box-shadow: inset 0px 0px 15px 0px rgba(255, 210, 0, 0.75), 0px 0px 50px 3px rgba(255, 210, 0, 0.75); 
+	}
+}
+
+@keyframes swing {
+  from { 
+	transform: rotate(7deg);
+	}
+  to { 
+	transform: rotate(-7deg);
+	}
+}
